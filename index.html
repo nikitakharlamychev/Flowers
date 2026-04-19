@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Студия «ВАНИЛЬ» — Главная</title>
-    <link rel="stylesheet" href="css/tailwind.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconify -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- Стили -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-stone-50 text-stone-800 selection:bg-rose-200/50">
+
+    <!-- Навигация -->
     <nav class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-b border-stone-200/50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="w-10"></div>
             <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 cursor-pointer group">
-                <div class="relative"><iconify-icon icon="solar:flower-linear" class="text-lg text-[#E11D48] group-hover:rotate-12 transition-transform duration-300"></iconify-icon><div class="absolute inset-0 bg-[#E11D48]/10 rounded-full blur-sm group-hover:blur opacity-0 group-hover:opacity-100 transition-opacity"></div></div>
+                <div class="relative">
+                    <iconify-icon icon="solar:flower-linear" class="text-lg text-[#E11D48] group-hover:rotate-12 transition-transform duration-300"></iconify-icon>
+                    <div class="absolute inset-0 bg-[#E11D48]/10 rounded-full blur-sm group-hover:blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
                 <span class="font-serif text-base tracking-[0.15em] uppercase font-medium text-stone-900 group-hover:text-[#E11D48] transition-colors">Ваниль</span>
             </div>
             <button onclick="toggleCart()" class="relative p-2 text-stone-500 hover:text-stone-900 transition-colors">
@@ -26,7 +36,9 @@
         </div>
     </nav>
 
+    <!-- Главная: Разделение экрана -->
     <div class="split-screen flex flex-col md:flex-row pt-[4.5rem] p-3 gap-3">
+        <!-- Букеты -->
         <a href="bouquet.html" class="split-half flex-1 bg-gradient-to-br from-rose-200 via-rose-100 to-rose-50 flex items-center justify-center group relative">
             <div class="absolute inset-0 bg-gradient-to-br from-rose-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="text-center z-10 p-8 transform transition-transform duration-500">
@@ -34,6 +46,7 @@
                 <h2 class="font-serif text-4xl md:text-6xl font-semibold tracking-tight text-stone-900">Заказ букета</h2>
             </div>
         </a>
+        <!-- Интерьер -->
         <a href="interior.html" class="split-half flex-1 bg-gradient-to-bl from-emerald-200 via-emerald-100 to-emerald-50 flex items-center justify-center group relative">
             <div class="absolute inset-0 bg-gradient-to-bl from-emerald-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="text-center z-10 p-8 transform transition-transform duration-500">
@@ -42,10 +55,79 @@
         </a>
     </div>
 
-    <!-- Модальные окна (общие) -->
-    <div id="cartModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm"><div class="modal-content bg-white rounded-3xl shadow-xl max-w-md w-full p-8 relative border border-stone-200/50"><button onclick="toggleCart()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-600 transition-colors p-1"><iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon></button><h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-6">Корзина</h2><div id="cartItems" class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-2"></div><div class="border-t border-stone-100 pt-5"><div class="flex justify-between items-end mb-6"><span class="text-stone-500 text-sm">Итого</span><span id="cartTotal" class="text-xl font-serif font-medium tracking-tight text-stone-900">0 ₽</span></div><button onclick="openOrderFromCart()" class="w-full btn-primary">Оформить заказ</button></div></div></div>
-    <div id="orderFormModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm"><div class="modal-content bg-white rounded-3xl shadow-xl max-w-md w-full p-8 relative border border-stone-200/50"><button onclick="closeOrderForm()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-600 transition-colors p-1"><iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon></button><h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-6 text-center">Оформление</h2><form id="orderForm" class="space-y-4" onsubmit="submitOrder(event)"><div><input type="text" id="customerName" required class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Ваше имя"></div><div><input type="tel" id="phoneInput" required pattern="^[\d\+\s\-\(\)]{10,}$" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Телефон *"></div><div><input type="text" id="socialInput" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Telegram / WhatsApp / VK"></div><div><textarea id="orderComment" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400 resize-none" rows="3" placeholder="Комментарий к заказу"></textarea></div><div class="pt-2"><button type="submit" id="submitBtn" class="w-full btn-primary">Подтвердить</button></div></form></div></div>
-    <div id="successModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm"><div class="modal-content bg-white rounded-3xl shadow-xl max-w-sm w-full p-8 text-center border border-stone-200/50"><div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6"><iconify-icon icon="solar:check-circle-linear" class="text-3xl text-[#10B981]"></iconify-icon></div><h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-2">Заказ принят!</h2><p class="text-sm text-stone-500 mb-8 font-light">Мы свяжемся с вами в ближайшее время.</p><div class="bg-stone-50 rounded-2xl p-5 mb-6 text-left border border-stone-100"><h3 class="text-xs font-medium text-stone-400 mb-3 uppercase tracking-wider">Контакты студии</h3><div class="space-y-3"><a href="tel:+79814226103" class="flex items-center gap-3 text-sm text-stone-600 hover:text-stone-900 transition-colors"><iconify-icon icon="solar:phone-linear" class="text-lg text-[#E11D48] opacity-80"></iconify-icon><span>+7 (981) 422-61-03</span></a><a href="https://t.me/HnikitaH" target="_blank" class="flex items-center gap-3 text-sm text-stone-600 hover:text-stone-900 transition-colors"><iconify-icon icon="solar:letter-linear" class="text-lg text-[#E11D48] opacity-80"></iconify-icon><span>@HnikitaH</span></a></div></div><button onclick="closeSuccessModal()" class="w-full btn-primary">ОК</button></div></div>
-    <script src="js/script.js"></script>
+    <!-- Модальное окно: Корзина -->
+    <div id="cartModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-3xl shadow-xl max-w-md w-full p-8 relative border border-stone-200/50">
+            <button onclick="toggleCart()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-600 transition-colors p-1">
+                <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+            </button>
+            <h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-6">Корзина</h2>
+            <div id="cartItems" class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-2"></div>
+            <div class="border-t border-stone-100 pt-5">
+                <div class="flex justify-between items-end mb-6">
+                    <span class="text-stone-500 text-sm">Итого</span>
+                    <span id="cartTotal" class="text-xl font-serif font-medium tracking-tight text-stone-900">0 ₽</span>
+                </div>
+                <button onclick="openOrderFromCart()" class="w-full btn-primary">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Форма заказа -->
+    <div id="orderFormModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-3xl shadow-xl max-w-md w-full p-8 relative border border-stone-200/50">
+            <button onclick="closeOrderForm()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-600 transition-colors p-1">
+                <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+            </button>
+            <h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-6 text-center">Оформление</h2>
+            <form id="orderForm" class="space-y-4" onsubmit="submitOrder(event)">
+                <div>
+                    <input type="text" id="customerName" required class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Ваше имя">
+                </div>
+                <div>
+                    <input type="tel" id="phoneInput" required pattern="^[\d\+\s\-\(\)]{10,}$" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Телефон *">
+                </div>
+                <div>
+                    <input type="text" id="socialInput" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400" placeholder="Telegram / WhatsApp / VK">
+                </div>
+                <div>
+                    <textarea id="orderComment" class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-1 focus:ring-[#E11D48] focus:border-[#E11D48] outline-none transition-all text-sm text-stone-800 placeholder:text-stone-400 resize-none" rows="3" placeholder="Комментарий к заказу"></textarea>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" id="submitBtn" class="w-full btn-primary">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Успех -->
+    <div id="successModal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-3xl shadow-xl max-w-sm w-full p-8 text-center border border-stone-200/50">
+            <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <iconify-icon icon="solar:check-circle-linear" class="text-3xl text-[#10B981]"></iconify-icon>
+            </div>
+            <h2 class="font-serif text-2xl font-medium tracking-tight text-stone-900 mb-2">Заказ принят!</h2>
+            <p class="text-sm text-stone-500 mb-8 font-light">Мы свяжемся с вами в ближайшее время для уточнения деталей.</p>
+            
+            <div class="bg-stone-50 rounded-2xl p-5 mb-6 text-left border border-stone-100">
+                <h3 class="text-xs font-medium text-stone-400 mb-3 uppercase tracking-wider">Контакты студии</h3>
+                <div class="space-y-3">
+                    <a href="tel:+79814226103" class="flex items-center gap-3 text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                        <iconify-icon icon="solar:phone-linear" class="text-lg text-[#E11D48] opacity-80"></iconify-icon>
+                        <span>+7 (981) 422-61-03</span>
+                    </a>
+                    <a href="https://t.me/HnikitaH" target="_blank" class="flex items-center gap-3 text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                        <iconify-icon icon="solar:letter-linear" class="text-lg text-[#E11D48] opacity-80"></iconify-icon>
+                        <span>@HnikitaH</span>
+                    </a>
+                </div>
+            </div>
+            
+            <button onclick="closeSuccessModal()" class="w-full btn-primary">ОК</button>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="script.js"></script>
 </body>
 </html>

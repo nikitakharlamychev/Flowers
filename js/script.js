@@ -1,7 +1,12 @@
 // ==========================================
 // ГЛОБАЛЬНОЕ СОСТОЯНИЕ
 // ==========================================
-let cart = JSON.parse(localStorage.getItem('vanilla_cart')) || [];
+let cart = [];
+try {
+    cart = JSON.parse(localStorage.getItem('vanilla_cart')) || [];
+} catch (e) {
+    console.warn('localStorage not available');
+}
 let currentCategory = 'bouquet';
 const flowerPrices = { roses: 150, tulips: 90, peonies: 350, greenery: 50 };
 const decorationPrices = { wrap: 200, card: 100 };
@@ -14,12 +19,22 @@ const portfolioData = {
     dense: [{title:'Свадьба', desc:'Полное покрытие', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=80'}, {title:'Сцена', desc:'Премиум', img:'https://images.unsplash.com/photo-1507699622177-98884f8279f4?w=400&q=80'}, {title:'VIP зал', desc:'Эксклюзив', img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&q=80'}] 
 };
 
-const catalogData = [
-    {name:'Утренняя роса', subtitle:'Белые розы, эвкалипт', price:3500, img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80'},
-    {name:'Кармин', subtitle:'Красные розы', price:5200, img:'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=400&q=80'},
-    {name:'Пробуждение', subtitle:'Тюльпаны', price:2800, img:'https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&q=80'},
-    {name:'Симфония', subtitle:'Пионы, зелень', price:8900, img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=80'}
-];
+const catalogData = {
+    bouquet: [
+        {name:'Утренняя роса', subtitle:'Белые розы, эвкалипт', price:3500, img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80'},
+        {name:'Кармин', subtitle:'Красные розы', price:5200, img:'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=400&q=80'},
+        {name:'Пробуждение', subtitle:'Тюльпаны', price:2800, img:'https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&q=80'},
+        {name:'Симфония', subtitle:'Пионы, зелень', price:8900, img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=80'}
+    ],
+    toy: [
+        {name:'Медвежонок', subtitle:'Плюшевый мишка', price:1500, img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80'},
+        {name:'Кролик', subtitle:'Мягкая игрушка', price:1200, img:'https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&q=80'}
+    ],
+    candy: [
+        {name:'Шоколадный набор', subtitle:'Разные вкусы', price:800, img:'https://images.unsplash.com/photo-1548907040-4baa42d10919?w=400&q=80'},
+        {name:'Конфеты ручной работы', subtitle:'Фруктовые', price:600, img:'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400&q=80'}
+    ]
+};
 
 // ==========================================
 // ОБЩИЕ ФУНКЦИИ
@@ -31,7 +46,14 @@ function updateCartBadge() {
     badge.textContent = totalQty; 
     badge.classList.toggle('hidden', totalQty === 0); 
 }
-function saveCart() { localStorage.setItem('vanilla_cart', JSON.stringify(cart)); updateCartBadge(); }
+function saveCart() { 
+    try {
+        localStorage.setItem('vanilla_cart', JSON.stringify(cart)); 
+    } catch (e) {
+        console.warn('localStorage not available');
+    }
+    updateCartBadge(); 
+}
 
 function toggleCart() { 
     const modal = document.getElementById('cartModal'); 
@@ -89,6 +111,7 @@ function selectCategory(c) {
     currentCategory = c; 
     document.querySelectorAll('.cat-btn')?.forEach(b => { b.classList.remove('border-stone-800','text-stone-900','shadow-sm'); b.classList.add('border-stone-200','text-stone-600'); });
     const a = document.getElementById(`cat-${c}`); if(a) { a.classList.add('border-stone-800','text-stone-900','shadow-sm'); a.classList.remove('border-stone-200','text-stone-600'); }
+    renderCatalog();
 }
 function toggleFlower(t) { document.getElementById(`flower-${t}`)?.classList.toggle('selected'); }
 function changeQuantity(t, d) { 
@@ -129,7 +152,8 @@ function resetBouquet() {
 }
 function renderCatalog() { 
     const g=document.getElementById('bestsellerGrid'); if(!g) return;
-    g.innerHTML = catalogData.map(i=>`<div class="product-card"><div class="relative h-56 overflow-hidden bg-stone-100"><img src="${i.img}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div><div class="p-5"><h3 class="font-serif text-base font-medium tracking-tight text-stone-900 mb-1">${i.name}</h3><p class="text-xs text-stone-500 mb-4 font-light truncate">${i.subtitle}</p><div class="flex items-center justify-between mt-auto"><span class="text-sm font-medium text-stone-900">${i.price.toLocaleString('ru-RU')} ₽</span><button onclick="addToCart('${i.name}',${i.price})" class="flex items-center justify-center w-8 h-8 bg-stone-50 rounded-lg text-stone-500 hover:bg-[#E11D48] hover:text-white transition-colors border border-stone-200/60 hover:border-transparent"><iconify-icon icon="solar:cart-plus-linear" class="text-lg"></iconify-icon></button></div></div></div>`).join('');
+    const data = catalogData[currentCategory] || catalogData.bouquet;
+    g.innerHTML = data.map(i=>`<div class="product-card"><div class="relative h-56 overflow-hidden bg-stone-100"><img src="${i.img}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div><div class="p-5"><h3 class="font-serif text-base font-medium tracking-tight text-stone-900 mb-1">${i.name}</h3><p class="text-xs text-stone-500 mb-4 font-light truncate">${i.subtitle}</p><div class="flex items-center justify-between mt-auto"><span class="text-sm font-medium text-stone-900">${i.price.toLocaleString('ru-RU')} ₽</span><button onclick="addToCart('${i.name}',${i.price})" class="flex items-center justify-center w-8 h-8 bg-stone-50 rounded-lg text-stone-500 hover:bg-[#E11D48] hover:text-white transition-colors border border-stone-200/60 hover:border-transparent"><iconify-icon icon="solar:cart-plus-linear" class="text-lg"></iconify-icon></button></div></div></div>`).join('');
 }
 function openOrderForm() { 
     const total = calculateTotal(); if(total===0 && !cart.length) { alert('Добавьте элементы в заказ'); return; }
@@ -153,7 +177,7 @@ function selectDensity(t,r) {
 }
 function showPortfolio(t) { 
     const s=document.getElementById('portfolioSection'),g=document.getElementById('portfolioGrid'); if(!s||!g)return;
-    s.classList.remove('hidden'); g.innerHTML=portfolioData[t].map(i=>`<div class="portfolio-item bg-white border border-stone-200/60 rounded-2xl overflow-hidden group"><div class="overflow-hidden h-36"><img src="${i.img}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div><div class="p-4"><div class="text-sm font-medium text-stone-900 mb-0.5">${i.title}</div><div class="text-xs text-stone-500 font-light truncate">${i.desc}</div></div></div>`).join('');
+    s.classList.remove('hidden'); g.innerHTML=portfolioData[t].map(i=>`<div class="portfolio-item bg-white border border-stone-200/60 rounded-2xl overflow-hidden group"><div class="overflow-hidden h-36"><img src="${i.img}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div><div class="p-4"><div class="text-sm font-medium text-stone-900 mb-0.5">${i.title}</div><div class="text-xs text-stone-500 font-light truncate">${i.desc}</div></div></div>`).join('');
     g.querySelectorAll('.portfolio-item').forEach(el=>el.classList.remove('show')); setTimeout(()=>{g.querySelectorAll('.portfolio-item').forEach((it,idx)=>setTimeout(()=>it.classList.add('show'),idx*100))},50);
 }
 function calculateInteriorPrice() { 

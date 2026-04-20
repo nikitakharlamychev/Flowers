@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ваниль — Dev Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css"><link rel="stylesheet" href="css/themes.css">
+</head>
+<body class="min-h-screen" data-role="dev">
+  <nav class="nav"><div class="container flex justify-between items-center py-3">
+    <a onclick="logout()" class="text-muted hover:text-accent transition">← Выйти</a>
+    <span class="font-serif font-medium">🔧 Dev Console</span>
+    <span class="text-xs text-muted">v1.0</span>
+  </div></nav>
+  <main class="container py-6 max-w-4xl mx-auto">
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="card rounded-xl p-4 text-center"><div class="text-2xl font-bold" id="total">0</div><div class="text-sm text-muted">Всего</div></div>
+      <div class="card rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-300" id="pending">0</div><div class="text-sm text-muted">В работе</div></div>
+      <div class="card rounded-xl p-4 text-center"><div class="text-2xl font-bold text-yellow-300" id="size">0 KB</div><div class="text-sm text-muted">localStorage</div></div>
+    </div>
+    <div class="card rounded-2xl p-4 mb-6 font-mono text-sm bg-[#1e293b] text-blue-100 overflow-x-auto">
+<pre>📁 Vanil/
+├── index.html | user.html | worker.html | dev.html
+├── 📁 css/ (styles, themes)
+└── 📁 js/ (auth, orders)</pre>
+    </div>
+    <div class="card rounded-2xl overflow-hidden">
+      <div class="p-4 border-b border-stone-700">📋 Логи</div>
+      <div id="logs" class="p-4 font-mono text-sm max-h-40 overflow-y-auto text-blue-100"></div>
+    </div>
+    <div class="mt-4 flex gap-2 flex-wrap">
+      <button onclick="clearAll()" class="px-4 py-2 rounded-lg bg-red-600/20 text-red-300 text-sm border border-red-900/30">🗑️ Очистить</button>
+      <button onclick="exportData()" class="px-4 py-2 rounded-lg bg-blue-600/20 text-blue-300 text-sm border border-blue-900/30">📥 Экспорт JSON</button>
+      <button onclick="testOrder()" class="px-4 py-2 rounded-lg bg-yellow-600/20 text-yellow-300 text-sm border border-yellow-900/30">🎭 Тестовый заказ</button>
+    </div>
+  </main>
+  <script type="module">
+    import { requireRole, logout } from './js/auth.js';
+    import { subscribe, STATUS, create } from './js/orders.js';
+    if(!requireRole('dev')) throw 'redirect';
+    const log = (m,t='info') => { const el=document.getElementById('logs'); const c={info:'text-blue-300',ok:'text-green-300',warn:'text-yellow-300',err:'text-red-300'}[t]; el.innerHTML=`<div class="${c}">[${new Date().toLocaleTimeString()}] ${m}</div>`+el.innerHTML; if(el.children.length>30)el.lastChild.remove(); };
+    let unsub; unsub = subscribe(o => {
+      document.getElementById('total').textContent=o.length;
+      document.getElementById('pending').textContent=o.filter(x=>x.status===STATUS.PENDING).length;
+      document.getElementById('size').textContent=Math.round(new Blob([JSON.stringify(localStorage)]).size/1024)+' KB';
+      log(`Обновлено: ${o.length} заказов`);
+    });
+    window.clearAll = () => { if(confirm('Удалить ВСЕ заказы?')){ localStorage.removeItem('vanilla_orders'); log('Очищено','warn'); unsub(); unsub=subscribe(()=>{}); } };
+    window.exportData = () => { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([localStorage.getItem('vanilla_orders')],{type:'application/json'})); a.download='orders.json'; a.click(); log('Экспортировано','ok'); };
+    window.testOrder = async () => { await create({customer:{name:'Тест',phone:'+79000000000'},type:'bouquet',comment:'Dev test',total:1500}); log('Создан тестовый','ok'); };
+    window.logout = logout; window.addEventListener('beforeunload', unsub); log('Dev panel ready');
+  </script>
+</body>
+</html>

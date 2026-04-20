@@ -1,0 +1,11 @@
+:root[data-role="user"] { --bg:#fafaf9; --card:#fff; --text:#292524; --muted:#78716c; --accent:#E11D48; --hover:#BE185D; --border:#e7e5e4; }
+:root[data-role="worker"] { --bg:#1c1917; --card:#292524; --text:#f5f5f4; --muted:#a8a29e; --accent:#10B981; --hover:#059669; --border:#44403c; }
+:root[data-role="dev"] { --bg:#1e3a5f; --card:#254a7a; --text:#f0f9ff; --muted:#a5b4fc; --accent:#60A5FA; --hover:#3B82F6; --border:#3b82f633; }
+
+body { background:var(--bg); color:var(--text); transition:0.3s; }
+.card { background:var(--card); border:1px solid var(--border); }
+.text-muted { color:var(--muted); }
+.btn { background:var(--accent); color:#fff; transition:0.2s; }
+.btn:hover { background:var(--hover); }
+input,select,textarea { background:var(--card); color:var(--text); border:1px solid var(--border); }
+input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accent); }
